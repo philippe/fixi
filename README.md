@@ -592,10 +592,63 @@ You can also use this property to store extension-related information.  See the 
 
 ## Examples
 
-Because fixi is minimalistic the user is responsible for implementing many behaviors they want via events. We have
-already seen how to abort an existing request that is already in flight.
+Here are some basic examples of fixi in action
 
-Here are some additional examples of useful behaviors implemented using events:
+### Click To Edit
+
+The htmx [click to edit example](https://htmx.org/examples/click-to-edit/) can be easily ported to fixi:
+
+```html
+<div id="target-div">
+    <div><label>First Name</label>: Joe</div>
+    <div><label>Last Name</label>: Blow</div>
+    <div><label>Email</label>: joe@blow.com</div>
+    <button fx-action="/contact/1/edit" fx-target="#target-div" class="btn primary">
+    Click To Edit
+    </button>
+</div>
+```
+
+### Delete Row
+
+The [delete row example]() from htmx can be implemented in fixi like so:
+
+```html
+<tr id="row-1">
+  <td>Angie MacDowell</td>
+  <td>angie@macdowell.org</td>
+  <td>Active</td>
+  <td>
+    <button class="btn danger" hx-action="/contact/1" hx-method="delete" hx-target="#row-1">
+      Delete
+    </button>
+  </td>
+</tr>
+```
+
+Note that this version does not have a confirmation prompt, you would need to implement that yourself using the
+[`fx:config`](#fxconfig) event.
+
+### Lazy Loading
+
+The htmx [lazy loading](https://htmx.org/examples/lazy-load/) example can be ported to fixi using the 
+[`fx:inited`](#fxinited) event:
+
+```html
+<div fx-action="/lazy-content" fx-trigger="fx:inited">
+  Content Loading...
+</div>
+```
+
+## Extensions
+
+Because fixi is minimalistic the user is responsible for implementing many behaviors they want via events. We have
+already seen how to abort an existing request that is already in flight.  
+
+The convention when you are adding fixi extension attributes is to use the `ext-fx` prefix, and to process the extension
+in the `fx:init` method.  You may find it useful to use the `__fixi` property on the element to store values on 
+
+Here are some examples of useful fixi extensions implemented using events.
 
 ### Disabling an Element During A Request
 
@@ -698,16 +751,6 @@ document.addEventListener("fx:init", (evt)=>{
   ...
   </tbody>
 </table>
-```
-
-### Lazy Loading
-
-You can implement lazy loading using the [`fx:inited`](#fxinited) event:
-
-```html
-<div fx-action="/lazy-content" fx-trigger="fx:inited">
-  Content Loading...
-</div>
 ```
 
 ### Polling
