@@ -619,7 +619,7 @@ The [delete row example]() from htmx can be implemented in fixi like so:
   <td>angie@macdowell.org</td>
   <td>Active</td>
   <td>
-    <button class="btn danger" hx-action="/contact/1" hx-method="delete" hx-target="#row-1">
+    <button class="btn danger" fx-action="/contact/1" fx-method="delete" fx-target="#row-1">
       Delete
     </button>
   </td>
