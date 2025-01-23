@@ -775,6 +775,26 @@ document.addEventListener("fx:inited", (evt)=>{ // use fx:inited so the __fixi p
 </div>
 ```
 
+### Custom Swapping Algorithms
+
+You can implement a custom swap strategies using the [`fx:config`](#fxconfig) event, and wiring in a function for the
+`evt.detail.cfg.swap` property.  Here is an example that allows you to use 
+[Idiomorph](https://github.com/bigskysoftware/idiomorph), a morphing algorithm, with the `morph` & `innerMorph` values
+in `fx-swap`:
+
+```js
+ document.addEventListener("fx:config", (evt) => {
+	if (evt.detail.cfg.swap == 'morph') evt.detail.cfg.swap = (target, text)=>Idiomroph.morph(target, text, { morphStyle: "outerHTML" })
+	if (evt.detail.cfg.swap == 'innerMorph') evt.detail.cfg.swap = (target, text)=>Idiomroph.morph(target, text, { morphStyle: "innerHTML" })
+});
+```
+```html
+<h3>Live News</h3>
+<div fx-action="/news" fx-trigger="poll" ext-fx-poll-interval="300">
+  ... initial content ...
+</div>
+```
+
 ## LICENCE
 
 ```
