@@ -785,15 +785,16 @@ in `fx-swap`:
 
 ```js
  document.addEventListener("fx:config", (evt) => {
-	if (evt.detail.cfg.swap == 'morph') evt.detail.cfg.swap = (target, text)=>Idiomroph.morph(target, text, { morphStyle: "outerHTML" })
-	if (evt.detail.cfg.swap == 'innerMorph') evt.detail.cfg.swap = (target, text)=>Idiomroph.morph(target, text, { morphStyle: "innerHTML" })
+	if (evt.detail.cfg.swap == 'morph') evt.detail.cfg.swap = (target, text)=>Idiomorph.morph(target, text, { morphStyle: "outerHTML" })
+	if (evt.detail.cfg.swap == 'innerMorph') evt.detail.cfg.swap = (target, text)=>Idiomorph.morph(target, text, { morphStyle: "innerHTML" })
 });
 ```
 ```html
-<h3>Live News</h3>
-<div fx-action="/news" fx-trigger="poll" ext-fx-poll-interval="300">
-  ... initial content ...
-</div>
+<h3>Morph</h3>
+<button fx-action="/demo" fx-swap="morph" fx-target="#output">
+  Morph New Content
+</button>
+<output id="output"></output>
 ```
 
 ## LICENCE
