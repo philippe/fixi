@@ -796,25 +796,6 @@ in `fx-swap`:
 </div>
 ```
 
-### History Support
-
-```js
-document.addEventListener("fx:after", (evt)=>{
-	var pushUrl = evt.target.getAttribute("ext-fx-push-url")
-	if (pushUrl == "true"){
-		history.replaceState({fx:true, url:window.location.href}, "", window.location.href)
-		history.pushState({fx:true, url:evt.detail.cfg.request.url}, "", evt.detail.cfg.request.url)
-	}
-})
-window.addEventListener("popstate", async(event)=>{
-	if (event.state.fx){
-		var response = await fetch(event.state.url)
-        var text = await response.text()
-        document.body.parentElement.outerHTML = text;
-	}
-})
-```
-
 ## LICENCE
 
 ```
