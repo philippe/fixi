@@ -50,7 +50,7 @@ fixi takes advantage of some modern JavaScript features not used by htmx:
 A hard constraint on the project is that the _unminified_, _uncompressed_ size must be less than that of
 the minified & compressed version of the (excellent) [preact library](https://bundlephobia.com/package/preact) (currently 4.6Kb).
 
-The current uncompressed size is `3460` bytes and the gzip'd size is `1376` bytes as determined by:
+The current uncompressed size is `3479` bytes and the gzip'd size is `1389` bytes as determined by:
 
 ```bash
 ls -l fixi.js | awk  '{print "raw:", $5}'; gzip -k fixi.js; ls -l fixi.js.gz | awk  '{print "gzipped:", $5}'; rm fixi.js.gz 
