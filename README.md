@@ -776,6 +776,20 @@ document.addEventListener("fx:inited", (evt)=>{ // use fx:inited so the __fixi p
 </div>
 ```
 
+### Confirmation
+
+This extension implements a simple `confirm()` based confirmation if the `ext-fx-confirm` attribute is found.  Note that
+it does not use a Promise, just the regular old blocking `confirm()` function
+
+```js
+document.addEventListener('fx:config', (evt)=>{
+	var confirmationMessage = evt.target.getAttribute("ext-fx-confirm")
+	if (confirmationMessage){
+      evt.detail.cfg.confirm = ()=> confirm(confirmationMessage)
+	}
+})
+```
+
 ### Custom Swapping Algorithms
 
 You can implement a custom swap strategies using the [`fx:config`](#fxconfig) event, and wiring in a function for the
