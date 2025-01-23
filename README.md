@@ -274,7 +274,8 @@ If the `fx-target` attribute is not present, it will target the element making t
 The swap mechanism and target can be changed in the request-related fixi events.
 
 You can implement a custom swapping mechanism by setting a function into the `evt.detail.cfg.swap` property in one of
-the request related events.  This function should take two arguments: the target element and the text to swap.
+the request related events.  This function should take two arguments: the target element and the text to swap.  You can
+see an [example below](#custom-swapping-algorithms) showing how to do this.
 
 By default, swapping will occur in a [View Transition](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API)
 if they are available.  If you don't want this to occur, you can set the `evt.detail.cfg.transition` property to false
@@ -793,6 +794,25 @@ in `fx-swap`:
 <div fx-action="/news" fx-trigger="poll" ext-fx-poll-interval="300">
   ... initial content ...
 </div>
+```
+
+### History Support
+
+```js
+document.addEventListener("fx:after", (evt)=>{
+	var pushUrl = evt.target.getAttribute("ext-fx-push-url")
+	if (pushUrl == "true"){
+		history.replaceState({fx:true, url:window.location.href}, "", window.location.href)
+		history.pushState({fx:true, url:evt.detail.cfg.request.url}, "", evt.detail.cfg.request.url)
+	}
+})
+window.addEventListener("popstate", async(event)=>{
+	if (event.state.fx){
+		var response = await fetch(event.state.url)
+        var text = await response.text()
+        document.body.parentElement.outerHTML = text;
+	}
+})
 ```
 
 ## LICENCE
