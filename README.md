@@ -190,7 +190,7 @@ The event that will trigger the request is determined by the `fx-trigger` attrib
 If that attribute is not present, the trigger defaults to:
 
 * `submit` for `form` elements
-* `change` for `input`, `select` & `textarea` elements
+* `change` for `input:not([type=button])`, `select` & `textarea` elements
 * `click` for everything else.
 
 ##### Requests

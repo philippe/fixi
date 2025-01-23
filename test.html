@@ -540,6 +540,20 @@
             <test-web-component fx-action='/demo' fx-swap='innerHTML' data-inner-html="Foo">
             </test-web-component>
         </div>
+
+        <div class="test">
+            <h3>Test button input works</h3>
+            <script>
+							test(async ()=>{
+								mock("/demo", "<div>Foo</div>");
+								find('input').click();
+								await sleep(50);
+								assertEq(find('div')?.innerText, "Foo");
+							})
+            </script>
+            <input type="button" fx-action="/demo" value="Button 1">
+        </div>
+
     </section>
 
     <section id="events">
