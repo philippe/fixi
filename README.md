@@ -560,7 +560,7 @@ document.addEventListener("fx:after", (evt)=>{
 })
 document.addEventListener("fx:swapped", (evt)=>{
   // reprocess the parent
-  evt.detail.cfg.parent.dispatchEvent(new CustomEvent("fx:process"), {bubble:true})
+  evt.detail.cfg.parent.dispatchEvent(new CustomEvent("fx:process"), {bubbles:true})
 })
 ```
 
