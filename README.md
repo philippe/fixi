@@ -831,9 +831,17 @@ You can implement a custom swap strategies using the [`fx:config`](#fxconfig) ev
 in `fx-swap`:
 
 ```js
- document.addEventListener("fx:config", (evt) => {
-	if (evt.detail.cfg.swap == 'morph') evt.detail.cfg.swap = (target, text)=>Idiomorph.morph(target, text, { morphStyle: "outerHTML" })
-	if (evt.detail.cfg.swap == 'innerMorph') evt.detail.cfg.swap = (target, text)=>Idiomorph.morph(target, text, { morphStyle: "innerHTML" })
+document.addEventListener("fx:config", (evt) => {
+  function morph(target, text, style) {
+    Idiomorph.morph(target, text, { morphStyle: style }).forEach((n) => {
+      // process nodes as morphing existing nodes will not trigger fixi MutationObserver
+      n.dispatchEvent(new CustomEvent("fx:process", { bubbles: true }));
+    });
+  }
+  if (evt.detail.cfg.swap == "morph")
+    evt.detail.cfg.swap = (target, text) => morph(target, text, "outerHTML");
+  if (evt.detail.cfg.swap == "innerMorph")
+    evt.detail.cfg.swap = (target, text) => morph(target, text, "innerHTML");
 });
 ```
 ```html
