@@ -526,7 +526,7 @@ The MutationObserver that fixi uses to watch for new content to process new fixi
 <a href="#elt__fixi"><code>elt.__fixi</code></a>
 </td>
 <td>
-The MutationObserver that fixi uses to watch for new content to process new fixi-powered elements.
+The event handler created by fixi on fixi-powered elements 
 </td>
 </tr>
 </tbody>
@@ -788,6 +788,39 @@ document.addEventListener('fx:config', (evt)=>{
       evt.detail.cfg.confirm = ()=> confirm(confirmationMessage)
 	}
 })
+```
+```html
+<button fx-action="/demo" fx-method="delete" ext-fx-confirm="Are you sure?">
+    Delete It
+</button>
+```
+
+### Relative Selectors
+
+This extension implements relative selectors for the `fx-target` attribute.
+
+```js
+document.addEventListener('fx:config', (evt)=>{
+	console.log("here")
+	var target = evt.target.getAttribute("fx-target") || ""
+	if (target.indexOf("closest ") == 0){
+		evt.detail.cfg.target = evt.target.closest(target.substring(8))
+	} else if (target.indexOf("find ") == 0){
+		evt.detail.cfg.target = evt.target.closest(target.substring(5))
+	} else if (target.indexOf("next ") == 0){
+		var matches = Array.from(document.querySelectorAll(target.substring(5)))
+		evt.detail.cfg.target = matches.find((elt) => evt.target.compareDocumentPosition(elt) === Node.DOCUMENT_POSITION_FOLLOWING)
+	} else if (target.indexOf("previous ") == 0){
+		var matches = Array.from(document.querySelectorAll(target.substring(9))).reverse()
+		evt.detail.cfg.target = matches.find((elt) => evt.target.compareDocumentPosition(elt) === Node.DOCUMENT_POSITION_PRECEDING)
+	}
+})
+```
+```html
+<button fx-action="/demo" fx-target="next output">
+    Get Data
+</button>
+<output></output>
 ```
 
 ### Custom Swapping Algorithms
