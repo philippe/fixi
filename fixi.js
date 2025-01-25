@@ -6,7 +6,7 @@
 		let options = {}
 		if (elt.__fixi || ignore(elt) || !send(elt, "init", {options})) return
 		elt.__fixi = async(evt)=>{
-			let reqs = elt.__fixi.requests ||= []
+			let reqs = elt.__fixi.requests ||= new Set()
 			let targetSelector = attr(elt, "fx-target")
 			let target = targetSelector ? document.querySelector(targetSelector) : elt
 			let headers = {"FX-Request":"true"}
@@ -25,7 +25,7 @@
 				cfg.body = null
 			}
 			if (cfg.preventTriggerDefault) evt.preventDefault()
-			reqs.push(cfg)
+			reqs.add(cfg)
 			try {
 				if (cfg.confirm){
 					let result = await cfg.confirm()
@@ -40,23 +40,22 @@
 				if (!send(elt, "error", {evt, cfg, error})) return
 				if (error.name === "AbortError") return
 			} finally {
-				reqs.splice(reqs.indexOf(cfg), 1)
+				reqs.delete(cfg)
 				send(elt, "finally", {evt, cfg})
 			}
 			let doSwap = ()=>{
-				if (cfg.swap instanceof Function){
+				if (cfg.swap instanceof Function)
 					return cfg.swap(cfg)
-				} else if (/(before|after)(start|end)/.test(cfg.swap)){
+				else if (/(before|after)(start|end)/.test(cfg.swap))
 					cfg.target.insertAdjacentHTML(cfg.swap, cfg.text)
-				} else if(cfg.swap in cfg.target){
+				else if(cfg.swap in cfg.target)
 					cfg.target[cfg.swap] = cfg.text
-				} else throw cfg.swap
+				else throw cfg.swap
 			}
-			if (cfg.transition && document.startViewTransition){
+			if (cfg.transition && document.startViewTransition)
 				await document.startViewTransition(doSwap).finished
-			} else {
+			else
 				await doSwap()
-			}
 			send(elt, "swapped", {cfg})
 		}
 		elt.__fixi.evt = attr(elt, "fx-trigger", elt.matches("form") ? "submit" : elt.matches("input:not([type=button]),select,textarea") ? "change" : "click")
