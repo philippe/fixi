@@ -146,7 +146,7 @@ fixi is not distributed via [NPM](https://www.npmjs.com/).
 </tr>
 <tr>
 <td><code>fx&#8209;swap</code></td>
-<td>A string specifying how the content should be swapped into the DOM, one of <code>innerHTML</code>, <code>outerHTML</code>, <code>beforestart</code>, <code>afterstart</code>, <code>beforeend</code> or <code>afterend</code>.  <code>outerHTML</code> is the default.</td>
+<td>A string specifying how the content should be swapped into the DOM, cane be one of <code>innerHTML</code>, <code>outerHTML</code>, <code>beforestart</code>, <code>afterstart</code>, <code>beforeend</code>, <code>afterend</code>, or any valid property on the element (e.g. `className` or `value`).  <code>outerHTML</code> is the default.</td>
 <td><code>fx&#8209;swap=&#39;innerHTML&#39;</code></td>
 </tr>
 <tr>
@@ -274,8 +274,9 @@ If the `fx-target` attribute is not present, it will target the element making t
 The swap mechanism and target can be changed in the request-related fixi events.
 
 You can implement a custom swapping mechanism by setting a function into the `evt.detail.cfg.swap` property in one of
-the request related events.  This function should take two arguments: the target element and the text to swap.  You can
-see an [example below](#custom-swapping-algorithms) showing how to do this.
+the request related events.  This function should take one argument that will be set to the fixi request config itself.  
+On that object you can access the `target`, `text`, `request`, etc.  You can see 
+an [example below](#custom-swapping-algorithms) showing how to do this.
 
 By default, swapping will occur in a [View Transition](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API)
 if they are available.  If you don't want this to occur, you can set the `evt.detail.cfg.transition` property to false
@@ -902,8 +903,8 @@ in `fx-swap`:
 
 ```js
  document.addEventListener("fx:config", (evt) => {
-	if (evt.detail.cfg.swap == 'morph') evt.detail.cfg.swap = (target, text)=>Idiomorph.morph(target, text, { morphStyle: "outerHTML" })
-	if (evt.detail.cfg.swap == 'innerMorph') evt.detail.cfg.swap = (target, text)=>Idiomorph.morph(target, text, { morphStyle: "innerHTML" })
+	if (evt.detail.cfg.swap == 'morph') evt.detail.cfg.swap = (cfg)=>Idiomorph.morph(cfg.target, cfg.text, { morphStyle: "outerHTML" })
+	if (evt.detail.cfg.swap == 'innerMorph') evt.detail.cfg.swap = (cfg)=>Idiomorph.morph(cfg.target, cfg.text, { morphStyle: "innerHTML" })
 });
 ```
 ```html

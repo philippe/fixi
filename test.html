@@ -554,6 +554,22 @@
             <input type="button" fx-action="/demo" value="Button 1">
         </div>
 
+        <div class="test">
+            <h3>Test can swap classes</h3>
+            <script>
+                test(async ()=>{
+                    mock("/demo", ()=>`foo`);
+                    find('button').click()
+                    await sleep(50);
+                    assertEq(find('button')?.className, "foo");
+                })
+            </script>
+            <button fx-action="/demo" fx-method="get" fx-swap="className">
+                Button 1
+            </button>
+        </div>
+
+
     </section>
 
     <section id="events">

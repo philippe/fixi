@@ -45,11 +45,11 @@
 			}
 			let doSwap = ()=>{
 				if (cfg.swap instanceof Function){
-					return cfg.swap(cfg.target, cfg.text)
-				} else if (cfg.swap === "outerHTML" || cfg.swap === "innerHTML"){
-					cfg.target[cfg.swap] = cfg.text
-				} else {
+					return cfg.swap(cfg)
+				} else if (/(before|after)(start|end)/.test(cfg.swap)){
 					cfg.target.insertAdjacentHTML(cfg.swap, cfg.text)
+				} else {
+					cfg.target[cfg.swap] = cfg.text
 				}
 			}
 			if (cfg.transition && document.startViewTransition){
