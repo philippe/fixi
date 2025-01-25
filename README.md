@@ -449,7 +449,8 @@ Mutating the `method`, etc. properties of the `cfg` object will change the behav
 that the `cfg` object is passed to `fetch()` as the second argument of type `RequestInit`, so any properties you want
 to set on the `RequestInit` may be set on the `cfg` object (e.g. `credentials`).
 
-Another property available on the `detail` of this event is `requests`, which will be an array of any existing
+Another property available on the `detail` of this event is `requests`, which will be a 
+[Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) of any existing
 outstanding requests for the element.
 
 fixi does not implement request queuing like htmx does, but you can implement a simple

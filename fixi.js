@@ -14,7 +14,7 @@
 			let action = attr(elt, "fx-action", "")
 			let swap = attr(elt, "fx-swap", "outerHTML")
 			let form = elt.form || elt.closest("form")
-			let body = form && new FormData(form, evt.submitter) || new FormData()
+			let body = new FormData(form || undefined, evt.submitter)
 			if (!form && elt.name) body.append(elt.name, elt.value)
 			let abort = new AbortController()
 			let drop = reqs.length > 0

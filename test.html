@@ -294,7 +294,7 @@
                 let i = 1;
                 mock("/demo", ()=>`<div>Foo${i++}</div>`);
                 find("button").addEventListener("fx:config", (evt)=>{
-                  if (evt.detail.requests.length > 0) {
+                  if (evt.detail.requests.size > 0) {
                     evt.preventDefault();
                   }
                 })
