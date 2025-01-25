@@ -832,16 +832,16 @@ in `fx-swap`:
 
 ```js
 document.addEventListener("fx:config", (evt) => {
-	function morph(target, text, style) {
-		Idiomorph.morph(target, text, { morphStyle: style }).forEach((n) => {
-			// process nodes as morphing existing nodes will not trigger fixi MutationObserver
-			n.dispatchEvent(new CustomEvent("fx:process", { bubbles: true }));
-		});
-	}
-	if (evt.detail.cfg.swap == "morph")
-		evt.detail.cfg.swap = (target, text) => morph(target, text, "outerHTML");
-	if (evt.detail.cfg.swap == "innerMorph")
-		evt.detail.cfg.swap = (target, text) => morph(target, text, "innerHTML");
+  function morph(cfg, style) {
+    Idiomorph.morph(cfg.target, cfg.text, { morphStyle: style }).forEach((n) => {
+      // process nodes as morphing existing nodes will not trigger fixi MutationObserver
+      n.dispatchEvent(new CustomEvent("fx:process", { bubbles: true }));
+    });
+  }
+  if (evt.detail.cfg.swap == "morph")
+    evt.detail.cfg.swap = (cfg) => morph(cfg, "outerHTML");
+  if (evt.detail.cfg.swap == "innerMorph")
+    evt.detail.cfg.swap = (cfg) => morph(cfg, "innerHTML");
 });
 ```
 ```html
