@@ -588,7 +588,7 @@ If you want to reprocess the element you will need to remove the property entire
 ```js
 elt.removeEventListener(elt.__fixi.evt, elt.__fixi)
 delete elt.__fixi
-elt.dispatchEvent(new CustomEvent("fx:process"), {bubble:true})
+elt.dispatchEvent(new CustomEvent("fx:process"), {bubbles:true})
 ```
 
 You can also use this property to store extension-related information.  See the [polling example](#polling) below.
@@ -902,9 +902,17 @@ You can implement a custom swap strategies using the [`fx:config`](#fxconfig) ev
 in `fx-swap`:
 
 ```js
- document.addEventListener("fx:config", (evt) => {
-	if (evt.detail.cfg.swap == 'morph') evt.detail.cfg.swap = (cfg)=>Idiomorph.morph(cfg.target, cfg.text, { morphStyle: "outerHTML" })
-	if (evt.detail.cfg.swap == 'innerMorph') evt.detail.cfg.swap = (cfg)=>Idiomorph.morph(cfg.target, cfg.text, { morphStyle: "innerHTML" })
+document.addEventListener("fx:config", (evt) => {
+  function morph(cfg, style) {
+    Idiomorph.morph(cfg.target, cfg.text, { morphStyle: style }).forEach((n) => {
+      // process nodes as morphing existing nodes will not trigger fixi MutationObserver
+      n.dispatchEvent(new CustomEvent("fx:process", { bubbles: true }));
+    });
+  }
+  if (evt.detail.cfg.swap == "morph")
+    evt.detail.cfg.swap = (cfg) => morph(cfg, "outerHTML");
+  if (evt.detail.cfg.swap == "innerMorph")
+    evt.detail.cfg.swap = (cfg) => morph(cfg, "innerHTML");
 });
 ```
 ```html
