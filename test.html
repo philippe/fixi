@@ -7,7 +7,7 @@
         let passed = 0;
         let failed = 0;
         let find = (selector) => currentTest.testElt.querySelector(selector);
-        function fetchMockImpl(input, init){
+        function fetchMock(input, init){
             if (init.signal && init.signal.aborted) {
                 throw new DOMException("Aborted", "AbortError");
             }
@@ -22,13 +22,14 @@
             }
             throw `Unknown path: ${input}`;
         }
+        document.addEventListener("fx:config", (evt)=>{
+            evt.detail.cfg.fetch = fetchMock
+        })
         function test(code){
             let currentScript = document.currentScript;
             let testElt = currentScript.closest('div');
             tests.push(async ()=>{
                 currentTest.testElt = testElt;
-                let originalFetch = window.fetch;
-                window.fetch = fetchMockImpl;
                 try {
                     await code();
                     testElt.classList.add("passed");
@@ -41,7 +42,6 @@
                     failed++;
                     document.querySelector(".failed-info").querySelector("output").innerText = failed.toString();
                 } finally {
-                    window.fetch = originalFetch;
                     currentTest = null;
                 }
             })
@@ -93,7 +93,7 @@
                   }
                 }
             }
-            // let fixi initialize
+            // let fixi initialize, then run tests in sequence
             setTimeout(async ()=>{
               for (let i = 0; i < tests.length; i++){
                 if (location.search.indexOf("?test") === 0) {
@@ -554,6 +554,22 @@
             <input type="button" fx-action="/demo" value="Button 1">
         </div>
 
+        <div class="test">
+            <h3>Test can swap classes</h3>
+            <script>
+                test(async ()=>{
+                    mock("/demo", ()=>`foo`);
+                    find('button').click()
+                    await sleep(50);
+                    assertEq(find('button')?.className, "foo");
+                })
+            </script>
+            <button fx-action="/demo" fx-method="get" fx-swap="className">
+                Button 1
+            </button>
+        </div>
+
+
     </section>
 
     <section id="events">
@@ -711,22 +727,6 @@
     </section>
 
 </main>
-
-<footer>
-    <h2>Scratch</h2>
-    <script>
-        function insertElts() {
-          let footer = document.querySelector('footer')
-          for(let i = 0; i < 5000; i++) {
-            footer.insertAdjacentHTML("beforeend", "<div><span fx-action='/foo'>asdf</span></div>")
-          }
-        }
-    </script>
-    <button onclick="insertElts()">
-        Add Stuff
-    </button>
-</footer>
-
 
 </body>
 </html>
