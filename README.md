@@ -852,6 +852,47 @@ document.addEventListener('fx:config', (evt)=>{
 <output></output>
 ```
 
+### Intersection Events
+
+fixi does not trigger events when elements become visible like htmx does, but you can implement this behavior with the
+following extension.  It adds an [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API)
+for every element with the `intersect` trigger and wires it in to trigger that event once the element intersects
+the viewport.  
+
+```js
+document.addEventListener("fx:init", (evt) => {
+    let trigger = evt.target.getAttribute("fx-trigger")
+    if(trigger === "intersect") {
+        let obs = evt.target.__fixi_ob = new IntersectionObserver((entries)=>{
+            for(const entry of entries) {
+                if (entry.isIntersecting){
+                    // done observing, remove
+                    obs.unobserve(evt.target)
+                    evt.target.__fixi_ob = null;
+                    // trigger event
+                    evt.target.dispatchEvent(new CustomEvent("intersect"))
+                    return;
+                }
+            }
+        })
+        obs.observe(evt.target)
+    }
+})
+```
+
+With this extension it is possible to implement the [infinite scroll](https://htmx.org/examples/infinite-scroll/)
+example:
+
+```html
+<tr fx-action="/contacts/?page=2"
+    fx-trigger="intersect"
+    fx-swap="afterend">
+  <td>Agent Smith</td>
+  <td>void29@null.org</td>
+  <td>55F49448C0</td>
+</tr>
+```
+
 ### Custom Swapping Algorithms
 
 You can implement a custom swap strategies using the [`fx:config`](#fxconfig) event, and wiring in a function for the
