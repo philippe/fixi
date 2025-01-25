@@ -442,6 +442,7 @@ This config object has the following properties:
   event
 * `signal` - The AbortSignal of the related AbortController for the request
 * `abort()` - A function that can be invoked to abort the pending fetch request
+* `fetch()` - The fetch() function that will be used for the request, can be used for [mocking](#mocking) requests
 
 Mutating the `method`, etc. properties of the `cfg` object will change the behavior of the request dynamically. Note
 that the `cfg` object is passed to `fetch()` as the second argument of type `RequestInit`, so any properties you want
@@ -590,6 +591,34 @@ elt.dispatchEvent(new CustomEvent("fx:process"), {bubble:true})
 ```
 
 You can also use this property to store extension-related information.  See the [polling example](#polling) below.
+
+## Mocking
+
+It is easy to mock `fetch()` requests in fixi by replacing the `evt.detail.cfg.fetch` property with a mocking function.
+The function can take the same arguments as [`fetch()`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) (or not
+if they are not needed) and should return a [`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response)
+compatible object or a Promise that resolves to one.
+
+For the simple case, the return object need only implement the `.text()` method.
+
+Here is an example that mocks responses using `template` elements
+
+```js
+document.addEventListener("fx:config", (evt) => {
+   const template = document.getElementById(evt.detail.cfg.action)
+   if (template) {
+     evt.detail.cfg.fetch = ()=>({text:  ()=>template.innerHTML}) // note the parens to make {} an object
+   }
+ })
+```
+```html
+<button fx-action="/demo">
+    Replace Me With A Template
+</button>
+<template id="/demo">
+    Some Template Content...
+</template>
+```
 
 ## Examples
 

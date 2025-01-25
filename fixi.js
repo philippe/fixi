@@ -18,7 +18,7 @@
 			if (!form && elt.name) body.append(elt.name, elt.value)
 			let abort = new AbortController()
 			let drop = reqs.length > 0
-			let cfg = {trigger:evt, method, action, headers, target, swap, body, drop, signal:abort.signal, abort:(r)=>abort.abort(r), preventTriggerDefault:true, transition:true}
+			let cfg = {trigger:evt, method, action, headers, target, swap, body, drop, signal:abort.signal, abort:(r)=>abort.abort(r), preventTriggerDefault:true, transition:true, fetch}
 			if (!send(elt, "config", {evt, cfg, requests:reqs}) || cfg.drop) return
 			if ((cfg.method === "GET" || cfg.method === "DELETE") && cfg.body){
 				if (!cfg.body.entries().next().done) cfg.action += (cfg.action.indexOf("?") > 0 ? "&" : "?") + new URLSearchParams(cfg.body).toString()
@@ -32,7 +32,7 @@
 					if (!result) return
 				}
 				if (!send(elt, "before", {evt, cfg, requests:reqs})) return
-				cfg.response = await fetch(cfg.action, cfg)
+				cfg.response = await cfg.fetch(cfg.action, cfg)
 				cfg.text = await cfg.response.text()
 				if (!send(elt, "after", {evt, cfg})) return
 			} catch(error) {
