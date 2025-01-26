@@ -32,16 +32,16 @@
 					let result = await cfg.confirm()
 					if (!result) return
 				}
-				if (!send(elt, "before", {evt, cfg, requests:reqs})) return
+				if (!send(elt, "before", {cfg, requests:reqs})) return
 				cfg.response = await cfg.fetch(cfg.action, cfg)
 				cfg.text = await cfg.response.text()
-				if (!send(elt, "after", {evt, cfg})) return
+				if (!send(elt, "after", {cfg})) return
 			} catch(error) {
-				send(elt, "error", {evt, cfg, error})
+				send(elt, "error", {cfg, error})
 				return
 			} finally {
 				reqs.delete(cfg)
-				send(elt, "finally", {evt, cfg})
+				send(elt, "finally", {cfg})
 			}
 			let doSwap = ()=>{
 				if (cfg.swap instanceof Function)
