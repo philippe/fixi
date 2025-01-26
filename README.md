@@ -66,7 +66,7 @@ Like a fixed-gear bike, fixi has very few moving parts:
 
 * No dependencies (including test and development)
 * No JavaScript API (beyond the [events](#events))
-* No `fixi.min.js` file
+* No minified `fixi.min.js` file
 * No `package.json`
 * No build step
 
