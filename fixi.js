@@ -1,8 +1,8 @@
 (()=>{
-	let send = (elt, type, detail, bub)=>elt.dispatchEvent(new CustomEvent("fx:" + type, {detail, cancelable:true, bubbles:bub !== false, composed:true}))
-	let attr = (elt, name, defaultVal)=>elt.getAttribute(name) || defaultVal
-	let ignore = (elt)=>elt.matches("[fx-ignore]") || elt.closest("[fx-ignore]") != null
-	let init = (elt)=>{
+	let send = (elt, type, detail, bub)=>elt.dispatchEvent(new CustomEvent("fx:" + type, {detail, cancelable:true, bubbles:bub !== false, composed:true})),
+			attr = (elt, name, defaultVal)=>elt.getAttribute(name) ?? defaultVal,
+			ignore = elt=>!!elt.closest("[fx-ignore]"),
+			init = elt=>{
 		let options = {}
 		if (elt.__fixi || ignore(elt) || !send(elt, "init", {options})) return
 		elt.__fixi = async(evt)=>{
@@ -28,10 +28,7 @@
 			if (cfg.preventTriggerDefault) evt.preventDefault()
 			reqs.add(cfg)
 			try {
-				if (cfg.confirm){
-					let result = await cfg.confirm()
-					if (!result) return
-				}
+				if (cfg.confirm && !await cfg.confirm()) return
 				if (!send(elt, "before", {evt, cfg, requests:reqs})) return
 				cfg.response = await cfg.fetch(cfg.action, cfg)
 				cfg.text = await cfg.response.text()
@@ -52,26 +49,22 @@
 					cfg.target[cfg.swap] = cfg.text
 				else throw cfg.swap
 			}
-			if (cfg.transition)
-				await cfg.transition(doSwap).finished
-			else
-				await doSwap()
+			await (cfg.transition || doSwap)(doSwap)?.finished
 			send(elt, "swapped", {cfg})
 		}
 		elt.__fixi.evt = attr(elt, "fx-trigger", elt.matches("form") ? "submit" : elt.matches("input:not([type=button]),select,textarea") ? "change" : "click")
 		elt.addEventListener(elt.__fixi.evt, elt.__fixi, options)
 		send(elt, "inited", {}, false)
 	}
-	let process = (elt)=>{
-		if (elt instanceof Element){
-			if (ignore(elt)) return
+	let process = elt=>{
+		if (elt instanceof Element && !ignore(elt)){
 			if (elt.matches("[fx-action]")) init(elt)
-			elt.querySelectorAll("[fx-action]").forEach((elt)=>init(elt))
+			elt.querySelectorAll("[fx-action]").forEach(elt=>init(elt))
 		}
 	}
-	document.addEventListener("fx:process", (evt)=>process(evt.target))
+	document.addEventListener("fx:process", evt=>process(evt.target))
 	document.addEventListener("DOMContentLoaded", ()=>{
-		document.__fixi_mo = new MutationObserver((recs)=>recs.forEach((r)=>r.type === "childList" && r.addedNodes.forEach((n)=>process(n))))
+		document.__fixi_mo = new MutationObserver(recs=>recs.forEach(r=>r.type === "childList" && r.addedNodes.forEach(process)))
 		document.__fixi_mo.observe(document.body, {childList:true, subtree:true})
 		process(document.body)
 	})
