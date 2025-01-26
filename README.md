@@ -441,9 +441,8 @@ This config object has the following properties:
 * `swap` - The mechanism by which the element will be swapped
 * `body` - The body of the request, if present, a FormData object that holds the data of the form associated with the
 * `drop` - Whether this request will be dropped, defaults to `true` if a request is already in flight
-* `transition` - The View Transition function, if it is available.  Set to `false` if you don't want a transition to occur.
-* `preventTriggerDefault` - A boolean (defaults to true) that, if true, will call `preventDefault()` on the triggering
-  event
+* `transition` - The View Transition function, if it is available.  Set to `false` if you don't want a transition to occur
+* `cancelTrigger` - A boolean (defaults to `true`) that, if true, will call `preventDefault()` on the triggering event
 * `signal` - The AbortSignal of the related AbortController for the request
 * `abort()` - A function that can be invoked to abort the pending fetch request
 * `fetch()` - The fetch() function that will be used for the request, can be used for [mocking](#mocking) requests

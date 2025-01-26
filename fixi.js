@@ -17,15 +17,15 @@
 			if (!form && elt.name) body.append(elt.name, elt.value)
 			let drop = !!reqs.size
 			let headers = {"FX-Request":"true"}
-			let abort = new AbortController()
-			let cfg = {trigger:evt, action, method, target, swap, body, drop, headers, abort:(r)=>abort.abort(r),
-				signal:abort.signal, preventTriggerDefault:true, transition:document.startViewTransition?.bind(document), fetch:fetch.bind(window)}
+			let ac = new AbortController()
+			let cfg = {trigger:evt, action, method, target, swap, body, drop, headers, abort:ac.abort.bind(ac),
+				signal:ac.signal, cancelTrigger:true, transition:document.startViewTransition?.bind(document), fetch:fetch.bind(window)}
 			if (!send(elt, "config", {evt, cfg, requests:reqs}) || cfg.drop) return
 			if (/GET|DELETE/.test(cfg.method)){
 				if (!cfg.body.entries().next().done) cfg.action += (cfg.action.indexOf("?") > 0 ? "&" : "?") + new URLSearchParams(cfg.body)
 				cfg.body = null
 			}
-			if (cfg.preventTriggerDefault) evt.preventDefault()
+			if (cfg.cancelTrigger) evt.preventDefault()
 			reqs.add(cfg)
 			try {
 				if (cfg.confirm){
