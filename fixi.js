@@ -15,7 +15,7 @@
 			let form = elt.form || elt.closest("form")
 			let body = new FormData(form || undefined, evt.submitter)
 			if (!form && elt.name) body.append(elt.name, elt.value)
-			let drop = reqs.length > 0
+			let drop = !!reqs.size
 			let headers = {"FX-Request":"true"}
 			let abort = new AbortController()
 			let cfg = {trigger:evt, action, method, target, swap, body, drop, headers, abort:(r)=>abort.abort(r),
