@@ -7,19 +7,19 @@
 		if (elt.__fixi || ignore(elt) || !send(elt, "init", {options})) return
 		elt.__fixi = async(evt)=>{
 			let reqs = elt.__fixi.requests ||= new Set()
+			let action = attr(elt, "fx-action")
+			let method = attr(elt, "fx-method", "GET").toUpperCase()
 			let targetSelector = attr(elt, "fx-target")
 			let target = targetSelector ? document.querySelector(targetSelector) : elt
-			let headers = {"FX-Request":"true"}
-			let method = attr(elt, "fx-method", "GET").toUpperCase()
-			let action = attr(elt, "fx-action", "")
 			let swap = attr(elt, "fx-swap", "outerHTML")
 			let form = elt.form || elt.closest("form")
 			let body = new FormData(form || undefined, evt.submitter)
 			if (!form && elt.name) body.append(elt.name, elt.value)
-			let abort = new AbortController()
 			let drop = reqs.length > 0
-			let cfg = {trigger:evt, method, action, headers, target, swap, body, drop, signal:abort.signal, abort:(r)=>abort.abort(r),
-				preventTriggerDefault:true, transition:document.startViewTransition?.bind(document), fetch:fetch.bind(window)}
+			let headers = {"FX-Request":"true"}
+			let abort = new AbortController()
+			let cfg = {trigger:evt, action, method, target, swap, body, drop, headers, abort:(r)=>abort.abort(r),
+				signal:abort.signal, preventTriggerDefault:true, transition:document.startViewTransition?.bind(document), fetch:fetch.bind(window)}
 			if (!send(elt, "config", {evt, cfg, requests:reqs}) || cfg.drop) return
 			if (/GET|DELETE/.test(cfg.method)){
 				if (!cfg.body.entries().next().done) cfg.action += (cfg.action.indexOf("?") > 0 ? "&" : "?") + new URLSearchParams(cfg.body).toString()
@@ -37,9 +37,8 @@
 				cfg.text = await cfg.response.text()
 				if (!send(elt, "after", {evt, cfg})) return
 			} catch(error) {
-				cfg.text = ""
-				if (!send(elt, "error", {evt, cfg, error})) return
-				if (error.name === "AbortError") return
+				send(elt, "error", {evt, cfg, error})
+				return
 			} finally {
 				reqs.delete(cfg)
 				send(elt, "finally", {evt, cfg})
