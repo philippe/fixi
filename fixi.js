@@ -1,6 +1,6 @@
-let fixi = { prefix:"fx-", headers:{"FX-Request":"true"}, default:{swap:"outerHTML"}, logger:()=>{}};
+let fixi = {prefix:"fx-", headers:{"FX-Request":"true"}, default:{swap:"outerHTML"}, logger:()=>{}};
 ((fx)=>{
-	let evtName = (evt)=> (fx.prefix ? fx.prefix.replace("-", ":"): "fixi:")+evt;
+	let evtName = (evt)=>(fx.prefix ? fx.prefix.replace("-", ":"): "fixi:")+evt;
 	let send = (elt, type, detail, bub)=>{fx.logger(type=evtName(type), elt, detail); return elt.dispatchEvent(new CustomEvent(type, {detail:detail, cancelable:true, bubbles:bub !== false, composed:true}))}
 	let attr = (elt, attr, defaultVal=null)=>elt.closest("["+fx.prefix+attr+"]")?.getAttribute(fx.prefix+attr) || defaultVal
 	let ignore = (elt)=>attr(elt, "ignore", null) !== null
@@ -9,18 +9,18 @@ let fixi = { prefix:"fx-", headers:{"FX-Request":"true"}, default:{swap:"outerHT
 		if (elt.__fixi || ignore(elt) || !send(elt, "init", {options})) return
 		elt.__fixi = async(evt)=>{
 			let reqs = elt.__fixi.requests ||= new Set()
+			let action = attr(elt, "href", attr(elt, "action", ""))
+			let method = attr(elt, "method", "GET").toUpperCase()
 			let targetSelector = attr(elt, "target")
 			let target = targetSelector === "this" ? elt.closest(`[${fx.prefix}target]`): document.querySelector(targetSelector) || elt
-			let method = attr(elt, "method", "GET").toUpperCase()
-			let action = attr(elt, "href", attr(elt, "action", ""))
 			let swap = attr(elt, "swap", fx.default.swap)
 			let form = elt.form || elt.closest("form")
 			let body = new FormData(form || undefined, evt.submitter)
 			if (!form && elt.name) body.append(elt.name, elt.value)
-			let abort = new AbortController()
 			let drop = reqs.length > 0
-			let cfg = {trigger:evt, method, action, headers:fx.headers, target, swap, body, drop, signal:abort.signal, abort:(r)=>abort.abort(r),
-				preventDefault:true, transition:document.startViewTransition?.bind(document), fetch:fetch.bind(window)}
+			let abort = new AbortController()
+			let cfg = {trigger:evt, action, method, target, swap, body, drop, headers:fx.headers, abort:(r)=>abort.abort(r), 
+				signal:abort.signal, preventDefault:true, transition:document.startViewTransition?.bind(document), fetch:fetch.bind(window)}
 			if (!send(elt, "config", {evt, cfg, requests:reqs}) || cfg.drop) return
 			if (/GET|DELETE/.test(cfg.method)) {
 				if (!cfg.body.entries().next().done) cfg.action += (cfg.action.indexOf("?") > 0 ? "&": "?") + new URLSearchParams(cfg.body).toString()
@@ -35,9 +35,8 @@ let fixi = { prefix:"fx-", headers:{"FX-Request":"true"}, default:{swap:"outerHT
 				cfg.text = await cfg.response.text()
 				if (!send(elt, "after", {evt, cfg})) return
 			} catch(error) {
-				cfg.text = ""
-				if (!send(elt, "error", {evt, cfg, error})) return
-				if (error.name === "AbortError") return
+				send(elt, "error", {evt, cfg, error})
+				return
 			} finally {
 				reqs.delete(cfg)
 				send(elt, "finally", {evt, cfg})
