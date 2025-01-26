@@ -7,21 +7,27 @@
 		if (elt.__fixi || ignore(elt) || !send(elt, "init", {options})) return
 		elt.__fixi = async(evt)=>{
 			let reqs = elt.__fixi.requests ||= new Set()
-			let action = attr(elt, "fx-action")
-			let method = attr(elt, "fx-method", "GET").toUpperCase()
-			let targetSelector = attr(elt, "fx-target")
-			let target = targetSelector ? document.querySelector(targetSelector) : elt
-			let swap = attr(elt, "fx-swap", "outerHTML")
 			let form = elt.form || elt.closest("form")
-			let body = new FormData(form || undefined, evt.submitter)
+			let body = new FormData(form ?? undefined, evt.submitter)
 			if (!form && elt.name) body.append(elt.name, elt.value)
-			let drop = !!reqs.size
-			let headers = {"FX-Request":"true"}
 			let ac = new AbortController()
-			let cfg = {trigger:evt, action, method, target, swap, body, drop, headers, abort:ac.abort.bind(ac),
-				signal:ac.signal, cancelTrigger:true, transition:document.startViewTransition?.bind(document), fetch:fetch.bind(window)}
+			let cfg = {
+				trigger:evt,
+				action:attr(elt, "fx-action"),
+				method:attr(elt, "fx-method", "GET").toUpperCase(),
+				target: document.querySelector(attr(elt, "fx-target")) ?? elt,
+				swap:attr(elt, "fx-swap", "outerHTML"),
+				body,
+				drop:reqs.size,
+				headers:{"FX-Request":"true"},
+				abort:(r)=>ac.abort.bind(ac),
+				signal:ac.signal,
+				preventTrigger:true,
+				transition:document.startViewTransition?.bind(document),
+				fetch:fetch.bind(window)
+			}
 			let go = send(elt, "config", {cfg, requests:reqs})
-			if (cfg.cancelTrigger) evt.preventDefault()
+			if (cfg.preventTrigger) evt.preventDefault()
 			if (!go || cfg.drop) return
 			if (/GET|DELETE/.test(cfg.method)){
 				let params = new URLSearchParams(cfg.body)
@@ -69,7 +75,7 @@
 		if (elt instanceof Element){
 			if (ignore(elt)) return
 			if (elt.matches("[fx-action]")) init(elt)
-			elt.querySelectorAll("[fx-action]").forEach((elt)=>init(elt))
+			elt.querySelectorAll("[fx-action]").forEach(init)
 		}
 	}
 	document.addEventListener("fx:process", (evt)=>process(evt.target))
