@@ -22,7 +22,7 @@
 				signal:ac.signal, cancelTrigger:true, transition:document.startViewTransition?.bind(document), fetch:fetch.bind(window)}
 			if (!send(elt, "config", {cfg, requests:reqs}) || cfg.drop) return
 			if (/GET|DELETE/.test(cfg.method)){
-				if (!cfg.body.entries().next().done) cfg.action += (cfg.action.indexOf("?") > 0 ? "&" : "?") + new URLSearchParams(cfg.body)
+				if (!cfg.body.entries().next().done) cfg.action += (cfg.action.includes("?") ? "&" : "?") + new URLSearchParams(cfg.body)
 				cfg.body = null
 			}
 			if (cfg.cancelTrigger) evt.preventDefault()
