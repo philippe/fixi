@@ -7,20 +7,20 @@
         let passed = 0;
         let failed = 0;
         let find = (selector) => currentTest.testElt.querySelector(selector);
-        function fetchMock(input, init){
+        function fetchMock(action, init){
             if (init.signal && init.signal.aborted) {
                 throw new DOMException("Aborted", "AbortError");
             }
             for (let mock of currentTest.mocks) {
-                if (mock.path === input) {
+                if (mock.path === action || (mock.path.test && mock.path.test(action))) {
                     if (typeof mock.response === 'string' || mock.response instanceof String) {
                         return Promise.resolve({text : () => Promise.resolve(mock.response)});
                     } else {
-                        return Promise.resolve({text: () => Promise.resolve(mock.response(input, init))})
+                        return Promise.resolve({text: () => Promise.resolve(mock.response(action, init))})
                     }
                 }
             }
-            throw `Unknown path: ${input}`;
+            throw `Unknown path: ${action}`;
         }
         document.addEventListener("fx:config", (evt)=>{
             if (!evt.target.hasAttribute("use-real-fetch")){
@@ -71,7 +71,7 @@
         document.addEventListener("fx:config", (evt) => logEvt(evt))
         document.addEventListener("fx:before", (evt) => logEvt(evt))
         document.addEventListener("fx:after", (evt) => logEvt(evt))
-        document.addEventListener("fx:error", (evt) => logEvt(evt))
+        document.addEventListener("fx:error", (evt) => console.error(evt.detail.error, evt.target, evt.detail?.cfg || "", evt.detail))
         document.addEventListener("fx:swapped", (evt) => logEvt(evt))
         document.addEventListener('DOMContentLoaded', async () => {
             for (let i = 0; i < document.querySelectorAll(".test").length; i++){
@@ -507,6 +507,100 @@
             <button fx-action="/demo" fx-swap="innerHTML">
                 Button 1
             </button>
+        </div>
+
+        <div class="test">
+            <h3>GET url encodes parameters</h3>
+            <script>
+                test(async ()=>{
+                    mock(/.*/, ()=>`<div>Foo</div>`);
+                    let finalURL = null;
+                    find("button").addEventListener("fx:before", (evt)=>{
+                        finalURL = evt.detail.cfg.action;
+                    })
+                    let btn = find('button')
+                    btn.click();
+                    await sleep(50);
+                    assertEq(finalURL, "/demo?foo=bar");
+                })
+            </script>
+            <form>
+                <input type="text" name="foo" value="bar">
+                <button fx-action="/demo">
+                    Button 1
+                </button>
+            </form>
+        </div>
+
+        <div class="test">
+            <h3>GET url encodes parameters and appends when existing params</h3>
+            <script>
+                test(async ()=>{
+                    mock(/.*/, ()=>`<div>Foo</div>`);
+                    let finalURL = null;
+                    find("button").addEventListener("fx:before", (evt)=>{
+                        finalURL = evt.detail.cfg.action;
+                    })
+                    let btn = find('button')
+                    btn.click();
+                    await sleep(50);
+                    assertEq(finalURL, "/demo?baz=bloop&foo=bar");
+                })
+            </script>
+            <form>
+                <input type="text" name="foo" value="bar">
+                <button fx-action="/demo?baz=bloop">
+                    Button 1
+                </button>
+            </form>
+        </div>
+
+        <div class="test">
+            <h3>DELETE url encodes parameters</h3>
+            <script>
+                test(async ()=>{
+                    mock(/.*/, ()=>`<div>Foo</div>`);
+                    let finalURL = null;
+                    find("button").addEventListener("fx:before", (evt)=>{
+                        finalURL = evt.detail.cfg.action;
+                    })
+                    let btn = find('button')
+                    btn.click();
+                    await sleep(50);
+                    assertEq(finalURL, "/demo?foo=bar");
+                })
+            </script>
+            <form>
+                <input type="text" name="foo" value="bar">
+                <button fx-action="/demo" fx-method="delete">
+                    Button 1
+                </button>
+            </form>
+        </div>
+
+        <div class="test">
+            <h3>POST does not url encodes parameters</h3>
+            <script>
+                test(async ()=>{
+                    mock(/.*/, ()=>`<div>Foo</div>`);
+                    let finalURL, body = null;
+                    find("button").addEventListener("fx:before", (evt)=>{
+                        finalURL = evt.detail.cfg.action;
+                        body = evt.detail.cfg.body;
+                    })
+                    let btn = find('button')
+                    btn.click();
+                    await sleep(50);
+                    assertEq(finalURL, "/demo");
+                    assertEq(body.has('foo'), true);
+                })
+            </script>
+            <form>
+                <input type="text" name="foo" value="bar">
+                <button fx-action="/demo" fx-method="post">
+                    Button 1
+                </button>
+            </form>
         </div>
 
     </section>
