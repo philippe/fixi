@@ -18,9 +18,9 @@
 			if (!form && elt.name) body.append(elt.name, elt.value)
 			let abort = new AbortController()
 			let drop = reqs.length > 0
-			let cfg = {trigger:evt, method, action, headers, target, swap, body, drop, signal:abort.signal, abort:(r)=>abort.abort(r), preventTriggerDefault:true, transition:true, fetch}
+			let cfg = {trigger:evt, method, action, headers, target, swap, body, drop, signal:abort.signal, abort:(r)=>abort.abort(r), preventTriggerDefault:true, transition:document.startViewTransition, fetch}
 			if (!send(elt, "config", {evt, cfg, requests:reqs}) || cfg.drop) return
-			if (/GET|DELETE/.test(cfg.method) && cfg.body){
+			if (/GET|DELETE/.test(cfg.method)){
 				if (!cfg.body.entries().next().done) cfg.action += (cfg.action.indexOf("?") > 0 ? "&" : "?") + new URLSearchParams(cfg.body).toString()
 				cfg.body = null
 			}
@@ -52,7 +52,7 @@
 					cfg.target[cfg.swap] = cfg.text
 				else throw cfg.swap
 			}
-			if (cfg.transition && document.startViewTransition)
+			if (cfg.transition)
 				await document.startViewTransition(doSwap).finished
 			else
 				await doSwap()

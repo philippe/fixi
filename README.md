@@ -438,7 +438,7 @@ This config object has the following properties:
 * `swap` - The mechanism by which the element will be swapped
 * `body` - The body of the request, if present, a FormData object that holds the data of the form associated with the
 * `drop` - Whether this request will be dropped, defaults to `true` if a request is already in flight
-* `transition` - Whether to use the View Transition API for swaps, defaults to `true`
+* `transition` - Whether to use the View Transition API for swaps, defaults to a [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) value if View Transitions are available.
 * `preventTriggerDefault` - A boolean (defaults to true) that, if true, will call `preventDefault()` on the triggering
   event
 * `signal` - The AbortSignal of the related AbortController for the request
