@@ -20,12 +20,13 @@
 			let ac = new AbortController()
 			let cfg = {trigger:evt, action, method, target, swap, body, drop, headers, abort:ac.abort.bind(ac),
 				signal:ac.signal, cancelTrigger:true, transition:document.startViewTransition?.bind(document), fetch:fetch.bind(window)}
-			if (!send(elt, "config", {cfg, requests:reqs}) || cfg.drop) return
+			let go = send(elt, "config", {cfg, requests:reqs})
+			if (cfg.cancelTrigger) evt.preventDefault()
+			if (!go || cfg.drop) return
 			if (/GET|DELETE/.test(cfg.method)){
 				if (!cfg.body.entries().next().done) cfg.action += (cfg.action.includes("?") ? "&" : "?") + new URLSearchParams(cfg.body)
 				cfg.body = null
 			}
-			if (cfg.cancelTrigger) evt.preventDefault()
 			reqs.add(cfg)
 			try {
 				if (cfg.confirm){

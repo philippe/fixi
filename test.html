@@ -623,6 +623,29 @@
         </div>
 
         <div class="test">
+            <h3>Test trigger event is cancelled when config halts</h3>
+            <script>
+              test(async ()=>{
+                let defaultPrevented = false;
+                mock("/demo", "<div>Foo</div>");
+                currentTest.testElt.addEventListener("click", (evt)=>{
+                    defaultPrevented = evt.defaultPrevented;
+                })
+                find('button').addEventListener('fx:config', (evt) => {
+                  evt.preventDefault()
+                })
+                find('button').click();
+                await sleep(50);
+                assertEq(defaultPrevented, true);
+                assertEq(find('button')?.innerText, "Button 1", true);
+              })
+            </script>
+            <button fx-action="/demo">
+                Button 1
+            </button>
+        </div>
+
+        <div class="test">
             <h3>Test basic fx:before triggered</h3>
             <script>
               test(async ()=>{
