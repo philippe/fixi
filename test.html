@@ -55,14 +55,8 @@
                 setTimeout(resolve, ms);
             })
         }
-        function assertEq(actual, expected) {
-            if (expected !== actual) {
-                console.error("Expected", expected, "found", actual);
-                throw  `Expected ${expected} found ${actual}`
-            }
-        }
-        function assertEqTrimmed(actual, expected) {
-            if (expected !== actual?.trim()) {
+        function assertEq(actual, expected, trim) {
+            if (expected !== (trim ? actual?.trim() : actual)) {
                 console.error("Expected", expected, "found", actual);
                 throw  `Expected ${expected} found ${actual}`
             }
@@ -160,7 +154,7 @@
                 mock("/demo", "<div>Foo</div>");
                 find('button').click();
                 await sleep(50);
-                assertEq(find('div')?.innerText, "Foo");
+                assertEq(find('div')?.innerText, "Foo", true);
               })
             </script>
             <button fx-action="/demo">
@@ -177,7 +171,7 @@
                 mock("/demo", "<div>Foo</div>");
                 find('button').click();
                 await sleep(50);
-                assertEq(find('div')?.innerText, "Foo");
+                assertEq(find('div')?.innerText, "Foo", true);
               })
             </script>
         </div>
@@ -189,7 +183,7 @@
                 mock("/demo", "<div>Foo</div>");
                 find('button').click();
                 await sleep(50);
-                assertEq(find('div')?.innerText, "Foo");
+                assertEq(find('div')?.innerText, "Foo", true);
               })
             </script>
             <button fx-action="/demo" fx-target="#output1">
@@ -207,8 +201,8 @@
                 mock("/demo", "<div>Foo</div>");
                 find('button').click();
                 await sleep(50);
-                assertEq(find('button')?.innerText, "Button 1");
-                assertEq(find('div')?.innerText, "Foo");
+                assertEq(find('button')?.innerText, "Button 1", true);
+                assertEq(find('div')?.innerText, "Foo", true);
               })
             </script>
             <button fx-action="/demo" fx-swap="afterend">
@@ -223,7 +217,7 @@
                 mock("/demo", "<div>Foo</div>");
                 find('button').click();
                 await sleep(50);
-                assertEq(find('button')?.innerText, "Foo");
+                assertEq(find('button')?.innerText, "Foo", true);
               })
             </script>
             <button fx-action="/demo" fx-method="get" fx-swap="innerHTML">
@@ -239,10 +233,10 @@
                 mock("/demo2", "<div>Foo</div>");
                 find('button').click();
                 await sleep(50);
-                assertEq(find('button')?.innerText, "Button 2");
+                assertEq(find('button')?.innerText, "Button 2", true);
                 find('button').click();
                 await sleep(50);
-                assertEq(find('div')?.innerText, "Foo");
+                assertEq(find('div')?.innerText, "Foo", true);
               })
             </script>
             <button fx-action="/demo">
@@ -258,10 +252,10 @@
                 mock("/demo2", "<div>Foo</div>");
                 find('button').click();
                 await sleep(50);
-                assertEq(find('button')?.innerText, "Button 2");
+                assertEq(find('button')?.innerText, "Button 2", true);
                 find('button').click();
                 await sleep(50);
-                assertEq(find('div')?.innerText, "Foo");
+                assertEq(find('div')?.innerText, "Foo", true);
               })
             </script>
             <button fx-action="/demo">
@@ -279,7 +273,7 @@
                 find('button').click();
                 find('button').click();
                 await sleep(50);
-                assertEq(find('button')?.innerText, "Foo2");
+                assertEq(find('button')?.innerText, "Foo2", true);
               })
             </script>
             <button fx-action="/demo" fx-method="get" fx-swap="innerHTML">
@@ -301,7 +295,7 @@
                 find('button').click();
                 find('button').click();
                 await sleep(50);
-                assertEq(find('button')?.innerText, "Foo1");
+                assertEq(find('button')?.innerText, "Foo1", true);
               })
             </script>
             <button fx-action="/demo" fx-method="get" fx-swap="innerHTML">
@@ -324,7 +318,7 @@
                 await sleep(50);
                 find('button').click();
                 await sleep(50);
-                assertEq(find('button')?.innerText, "Foo2");
+                assertEq(find('button')?.innerText, "Foo2", true);
               })
             </script>
             <button fx-action="/demo" fx-method="get" fx-swap="innerHTML">
@@ -365,7 +359,7 @@
                 find('button').click();
                 find('button').click();
                 await sleep(50);
-                assertEq(find('button')?.innerText, "Foo1");
+                assertEq(find('button')?.innerText, "Foo1", true);
               })
             </script>
             <button fx-action="/demo" fx-method="get" fx-swap="innerHTML">
@@ -488,7 +482,7 @@
                 let btn = find('button')
                 btn.click();
                 await sleep(50);
-                assertEq(btn.innerText, "Bar");
+                assertEq(btn.innerText, "Bar", true);
               })
             </script>
             <button fx-action="/demo" fx-swap="innerHTML">
@@ -519,7 +513,7 @@
                 let btn = find('button')
                 btn.click();
                 await sleep(50);
-                assertEq(btn.innerText, "Foo");
+                assertEq(btn.innerText, "Foo", true);
               })
             </script>
             <test-web-component data-inner-html="<button fx-action='/demo' fx-swap='innerHTML'>Demo</button>">
@@ -534,7 +528,7 @@
                 let component = find('test-web-component')
                 component.click();
                 await sleep(50);
-                assertEq(component.innerText, "Foo");
+                assertEq(component.innerText, "Foo", true);
               })
             </script>
             <test-web-component fx-action='/demo' fx-swap='innerHTML' data-inner-html="Foo">
