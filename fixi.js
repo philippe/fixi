@@ -24,7 +24,7 @@
 			if (cfg.cancelTrigger) evt.preventDefault()
 			if (!go || cfg.drop) return
 			if (/GET|DELETE/.test(cfg.method)){
-				if (!cfg.body.entries().next().done) cfg.action += (cfg.action.includes("?") ? "&" : "?") + new URLSearchParams(cfg.body)
+				if (!cfg.body.values().next().done) cfg.action += (cfg.action.includes("?") ? "&" : "?") + new URLSearchParams(cfg.body)
 				cfg.body = null
 			}
 			reqs.add(cfg)
