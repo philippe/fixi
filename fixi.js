@@ -25,9 +25,8 @@
 			if (!go || cfg.drop) return
 			if (/GET|DELETE/.test(cfg.method)){
 				let params = new URLSearchParams(cfg.body)
-				if (params.size) {
+				if (params.size)
 					cfg.action += (/\?/.test(cfg.action) ? "&" : "?") + params
-				}
 				cfg.body = null
 			}
 			reqs.add(cfg)
