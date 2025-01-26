@@ -12,34 +12,35 @@ let fixi = {prefix:"fx-", headers:{"FX-Request":"true"}, default:{swap:"outerHTM
 			let action = attr(elt, "href", attr(elt, "action", ""))
 			let method = attr(elt, "method", "GET").toUpperCase()
 			let targetSelector = attr(elt, "target")
-			let target = targetSelector === "this" ? elt.closest(`[${fx.prefix}target]`): document.querySelector(targetSelector) || elt
+			let target = document.querySelector(targetSelector) || elt.closest(`[${fx.prefix}target]`) || elt
 			let swap = attr(elt, "swap", fx.default.swap)
 			let form = elt.form || elt.closest("form")
 			let body = new FormData(form || undefined, evt.submitter)
 			if (!form && elt.name) body.append(elt.name, elt.value)
-			let drop = reqs.length > 0
-			let abort = new AbortController()
-			let cfg = {trigger:evt, action, method, target, swap, body, drop, headers:fx.headers, abort:(r)=>abort.abort(r), 
-				signal:abort.signal, preventDefault:true, transition:document.startViewTransition?.bind(document), fetch:fetch.bind(window)}
-			if (!send(elt, "config", {evt, cfg, requests:reqs}) || cfg.drop) return
+			let drop = !!reqs.size
+			let ac = new AbortController()
+			let cfg = {trigger:evt, action, method, target, swap, body, drop, headers:fx.headers, abort:ac.abort.bind(ac),
+				signal:ac.signal, cancelTrigger:true, transition:document.startViewTransition?.bind(document), fetch:fetch.bind(window)}
+			let go = send(elt, "config", {cfg, requests:reqs})
+			if (cfg.cancelTrigger) evt.preventDefault()
+			if (!go || cfg.drop) return
 			if (/GET|DELETE/.test(cfg.method)) {
-				if (!cfg.body.entries().next().done) cfg.action += (cfg.action.indexOf("?") > 0 ? "&": "?") + new URLSearchParams(cfg.body).toString()
+				if (!cfg.body.values().next().done) cfg.action += (cfg.action.includes("?") ? "&": "?") + new URLSearchParams(cfg.body)
 				cfg.body = null
 			}
-			if (cfg.preventDefault) evt.preventDefault()
 			reqs.add(cfg)
 			try {
 				if (cfg.confirm && !await cfg.confirm()) return
-				if (!send(elt, "before", {evt, cfg, requests:reqs})) return
+				if (!send(elt, "before", {cfg, requests:reqs})) return
 				cfg.response = await cfg.fetch(cfg.action, cfg)
 				cfg.text = await cfg.response.text()
-				if (!send(elt, "after", {evt, cfg})) return
+				if (!send(elt, "after", {cfg})) return
 			} catch(error) {
-				send(elt, "error", {evt, cfg, error})
+				send(elt, "error", {cfg, error})
 				return
 			} finally {
 				reqs.delete(cfg)
-				send(elt, "finally", {evt, cfg})
+				send(elt, "finally", {cfg})
 			}
 			let doSwap = ()=>{
 				if (cfg.swap instanceof Function)

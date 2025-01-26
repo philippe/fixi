@@ -269,6 +269,23 @@
             <h3>Test double-click works when drop disabled</h3>
             <script>
               test(async ()=>{
+                let i = 1;
+                mock("/demo", ()=>`<div>Foo${i++}</div>`);
+                find('button').click();
+                find('button').click();
+                await sleep(50);
+                assertEq(find('button')?.innerText, "Foo1", true);
+              })
+            </script>
+            <button fx-action="/demo" fx-method="get" fx-swap="innerHTML">
+                Button 1
+            </button>
+        </div>
+
+        <div class="test">
+            <h3>Test double-click works when drop disabled</h3>
+            <script>
+              test(async ()=>{
                 find('button').addEventListener("fx:config", (evt)=> evt.detail.cfg.drop = false) // don't drop any reqs
                 let i = 1;
                 mock("/demo", ()=>`<div>Foo${i++}</div>`);
@@ -598,6 +615,29 @@
                 await sleep(50);
                 assertEq(triggered, true);
                 assertEq(find('div')?.innerText, "Foo");
+              })
+            </script>
+            <button fx-action="/demo">
+                Button 1
+            </button>
+        </div>
+
+        <div class="test">
+            <h3>Test trigger event is cancelled when config halts</h3>
+            <script>
+              test(async ()=>{
+                let defaultPrevented = false;
+                mock("/demo", "<div>Foo</div>");
+                currentTest.testElt.addEventListener("click", (evt)=>{
+                    defaultPrevented = evt.defaultPrevented;
+                })
+                find('button').addEventListener('fx:config', (evt) => {
+                  evt.preventDefault()
+                })
+                find('button').click();
+                await sleep(50);
+                assertEq(defaultPrevented, true);
+                assertEq(find('button')?.innerText, "Button 1", true);
               })
             </script>
             <button fx-action="/demo">
