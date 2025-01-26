@@ -85,10 +85,10 @@ fixi is intended to be [vendored](https://macwright.com/2021/03/11/vendor-by-def
 project:
 
 ```bash
-curl https://raw.githubusercontent.com/bigskysoftware/fixi/refs/tags/0.5.5/fixi.js >> fixi-0.5.5.js
+curl https://raw.githubusercontent.com/bigskysoftware/fixi/refs/tags/0.5.6/fixi.js >> fixi-0.5.6.js
 ```
 
-The SHA256 of v0.5.5 is 
+The SHA256 of v0.5.6 is 
 
 `ZzR8ubcIBwj7AV725XbZx6s5KqHu4/JIhUW2wU2ccX8=`
 
@@ -99,12 +99,12 @@ cat fixi.js | openssl sha256 -binary | openssl base64
 ```
 Alternatively can download the source from here:
 
-<https://github.com/bigskysoftware/fixi/archive/refs/tags/0.5.5.zip>
+<https://github.com/bigskysoftware/fixi/archive/refs/tags/0.5.6.zip>
 
 You can also use the JSDelivr CDN for local development or testing:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/bigskysoftware/fixi@0.5.5/fixi.js"
+<script src="https://cdn.jsdelivr.net/gh/bigskysoftware/fixi@0.5.6/fixi.js"
         crossorigin="anonymous"
         integrity="sha256-ZzR8ubcIBwj7AV725XbZx6s5KqHu4/JIhUW2wU2ccX8="></script>
 ```
