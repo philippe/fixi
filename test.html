@@ -23,7 +23,9 @@
             throw `Unknown path: ${input}`;
         }
         document.addEventListener("fx:config", (evt)=>{
-            evt.detail.cfg.fetch = fetchMock
+            if (!evt.target.hasAttribute("use-real-fetch")){
+              evt.detail.cfg.fetch = fetchMock
+            }
         })
         function test(code){
             let currentScript = document.currentScript;
@@ -559,6 +561,20 @@
                 })
             </script>
             <button fx-action="/demo" fx-method="get" fx-swap="className">
+                Button 1
+            </button>
+        </div>
+
+        <div class="test">
+            <h3>Test can use real fetch()</h3>
+            <script>
+                test(async ()=>{
+                    find('button').click()
+                    await sleep(50);
+                    assertEq(find('button')?.innerText, "foo", true);
+                })
+            </script>
+            <button fx-action="data:text/plain,foo" fx-swap="innerHTML" use-real-fetch>
                 Button 1
             </button>
         </div>
