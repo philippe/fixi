@@ -81,8 +81,7 @@ The fixi project consists of three files:
 
 ## Installing
 
-fixi is intended to be [vendored](https://macwright.com/2021/03/11/vendor-by-default), that is, copied, into your 
-project:
+fixi is intended to be [vendored](https://htmx.org/essays/vendoring/), that is, copied, into your project:
 
 ```bash
 curl https://raw.githubusercontent.com/bigskysoftware/fixi/refs/tags/0.5.7/fixi.js >> fixi-0.5.7.js
@@ -126,38 +125,38 @@ fixi is not distributed via [NPM](https://www.npmjs.com/).
 <tbody>
 <tr>
   <td>
-    <code>fx&#8209;action</code>
+    <code>fx-action</code>
   </td>
   <td>
     The URL to which an HTTP request will be issued, required
   </td>
   <td>
-    <code>fx&#8209;action='/demo'</code>
+    <code>fx-action='/demo'</code>
   </td>
 </tr>
 <tr>
-<td><code>fx&#8209;method</code></td>
-<td>The HTTP Method that will be used for the request (case&#8209;insensitive), defaults to <code>GET</code></td>
-<td><code>fx&#8209;method=&#39;DELETE&#39;</code></td>
+<td><code>fx-method</code></td>
+<td>The HTTP Method that will be used for the request (case-insensitive), defaults to <code>GET</code></td>
+<td><code>fx-method=&#39;DELETE&#39;</code></td>
 </tr>
 <tr>
-<td><code>fx&#8209;target</code></td>
+<td><code>fx-target</code></td>
 <td>A CSS selector specifying where to place the response HTML in the DOM, defaults to the current element</td>
-<td><code>fx&#8209;target=&#39;#a&#8209;div&#39;</code></td>
+<td><code>fx-target=&#39;#a-div&#39;</code></td>
 </tr>
 <tr>
-<td><code>fx&#8209;swap</code></td>
+<td><code>fx-swap</code></td>
 <td>A string specifying how the content should be swapped into the DOM, cane be one of <code>innerHTML</code>, <code>outerHTML</code>, <code>beforestart</code>, <code>afterstart</code>, <code>beforeend</code>, <code>afterend</code>, or any valid property on the element (e.g. `className` or `value`).  <code>outerHTML</code> is the default.</td>
-<td><code>fx&#8209;swap=&#39;innerHTML&#39;</code></td>
+<td><code>fx-swap=&#39;innerHTML&#39;</code></td>
 </tr>
 <tr>
-<td><code>fx&#8209;trigger</code></td>
-<td>The event that will trigger a request.  Defaults to <code>submit</code> for <code>form</code> elements, <code>change</code> for <code>input</code>&#8209;like elements & <code>click</code> for all other elements</td>
-<td><code>fx&#8209;trigger=&#39;click&#39;</code></td>
+<td><code>fx-trigger</code></td>
+<td>The event that will trigger a request.  Defaults to <code>submit</code> for <code>form</code> elements, <code>change</code> for <code>input</code>-like elements & <code>click</code> for all other elements</td>
+<td><code>fx-trigger=&#39;click&#39;</code></td>
 </tr>
 <tr>
-<td><code>fx&#8209;ignore</code></td>
-<td>Any element with this attribute on it or on a parent will not be processed for <code>fx&#8209;*</code> attributes</td>
+<td><code>fx-ignore</code></td>
+<td>Any element with this attribute on it or on a parent will not be processed for <code>fx-*</code> attributes</td>
 <td></td>
 </tr>
 </tbody>
