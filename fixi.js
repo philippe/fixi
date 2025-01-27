@@ -20,7 +20,7 @@
 				body,
 				drop:reqs.size,
 				headers:{"FX-Request":"true"},
-				abort:(r)=>ac.abort.bind(ac),
+				abort:ac.abort.bind(ac),
 				signal:ac.signal,
 				preventTrigger:true,
 				transition:document.startViewTransition?.bind(document),

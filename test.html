@@ -352,6 +352,9 @@
                 mock("/demo", ()=>`<div>Foo</div>`);
                 find("button").addEventListener("fx:before", (evt)=>{
                   evt.detail.cfg.abort();
+                  evt.detail.cfg.confirm = async() => {
+                    await sleep(1)
+                  }
                 })
                 find('button').click();
                 await sleep(50);
